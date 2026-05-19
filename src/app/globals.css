@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    @apply border-border;
+  }
+
+  html {
+    @apply h-full scroll-smooth;
+  }
+
+  body {
+    @apply min-h-full bg-canvas font-sans text-foreground antialiased;
+  }
+
+  ::selection {
+    @apply bg-accent/25 text-foreground;
+  }
+}
+
+@layer utilities {
+  .glass-nav {
+    background: rgb(12 21 29 / 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .label-caps {
+    @apply font-mono text-xs font-medium uppercase tracking-widest;
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 20px rgb(0 198 255 / 0.15);
+  }
+
+  .card-industrial {
+    @apply rounded-2xl border border-border bg-surface transition-colors duration-200;
+  }
+
+  .card-industrial:hover {
+    @apply border-accent/50;
+  }
+
+  .gradient-overlay-bottom {
+    background: linear-gradient(
+      to top,
+      rgb(7 17 26 / 0.95) 0%,
+      rgb(7 17 26 / 0.4) 45%,
+      transparent 100%
+    );
+  }
+
+  .gradient-overlay-hero {
+    background: linear-gradient(
+      105deg,
+      rgb(7 17 26 / 0.92) 0%,
+      rgb(7 17 26 / 0.55) 45%,
+      rgb(7 17 26 / 0.25) 100%
+    );
+  }
+
+  .logo-shell {
+    @apply rounded-2xl border border-border/50 bg-background/30 p-3 backdrop-blur-md transition-[filter,box-shadow,border-color] duration-300 sm:p-4;
+  }
+
+  .logo-shell:hover {
+    border-color: rgb(0 198 255 / 0.35);
+    filter: drop-shadow(0 0 14px rgb(0 198 255 / 0.45));
+    box-shadow: 0 0 28px rgb(0 198 255 / 0.12);
+  }
+}
