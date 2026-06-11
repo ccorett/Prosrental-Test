@@ -11,6 +11,20 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+export function formatTTD(amount: number): string {
+  return new Intl.NumberFormat("en-TT", {
+    style: "currency",
+    currency: "TTD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export function parseAmount(value: string): number {
+  const parsed = Number.parseFloat(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
+
 export function getWhatsAppUrl(phone: string, message?: string): string {
   const digits = phone.replace(/\D/g, "");
   const text = message

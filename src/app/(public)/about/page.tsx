@@ -3,12 +3,17 @@ import { Warehouse } from "lucide-react";
 import { CtaBanner } from "@/components/sections/CtaBanner";
 import { PageHero } from "@/components/sections/PageHero";
 import { PlaceholderMedia } from "@/components/ui/PlaceholderMedia";
-import { ABOUT_STATS, TARGET_MARKETS } from "@/lib/data";
+import {
+  ABOUT_STATS,
+  COMPANY_OVERVIEW,
+  CORE_VALUES,
+  TARGET_MARKETS,
+} from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Learn about Pro Rentals—your trusted partner for professional equipment rentals since 2010.",
+    "Learn about Pro Rentals—your reliable equipment rental partner in Plymouth, Tobago.",
 };
 
 export default function AboutPage() {
@@ -17,7 +22,7 @@ export default function AboutPage() {
       <PageHero
         eyebrow="About Us"
         title="Equipment Rentals Built on Trust"
-        description="For over 15 years, Pro Rentals has helped contractors, businesses, and homeowners get the tools they need—when they need them."
+        description={COMPANY_OVERVIEW}
       />
 
       <section className="py-16 lg:py-24">
@@ -29,9 +34,9 @@ export default function AboutPage() {
               </h2>
               <p className="mt-6 leading-relaxed text-muted">
                 Pro Rentals started with a simple mission: make professional-grade
-                equipment accessible without the complexity. Today we maintain one
-                of the region&apos;s largest fleets of cleaning, construction, DIY,
-                and facility equipment—each unit inspected and ready to perform.
+                equipment accessible without the complexity. Today we maintain a diverse
+                fleet across DIY, construction, cleaning, landscaping, access, and
+                sanitation categories—each unit inspected and ready to perform.
               </p>
               <p className="mt-4 leading-relaxed text-muted">
                 Whether you&apos;re a contractor on a tight deadline, a facility
@@ -56,6 +61,31 @@ export default function AboutPage() {
               aspectClass="aspect-[4/3] w-full rounded-2xl border border-border"
               icon={Warehouse}
             />
+          </div>
+
+          <div className="mt-20">
+            <header className="mb-10 max-w-2xl">
+              <p className="label-caps text-accent">Mission & Values</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight">
+                Reliable Equipment. Transparent Service.
+              </h2>
+              <p className="mt-4 text-muted">
+                We position Pro Rentals as a dependable rental partner—not just a
+                catalogue, but a team that helps you plan, estimate, and execute.
+              </p>
+            </header>
+            <div className="grid gap-6 md:grid-cols-3">
+              {CORE_VALUES.map((value) => (
+                <article key={value.title} className="card-industrial p-6 lg:p-8">
+                  <h3 className="text-xl font-semibold text-foreground">
+                    {value.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+                    {value.description}
+                  </p>
+                </article>
+              ))}
+            </div>
           </div>
 
           <div className="mt-20 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

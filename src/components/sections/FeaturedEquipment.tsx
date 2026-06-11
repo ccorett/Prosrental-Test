@@ -1,10 +1,33 @@
 import { EquipmentCard } from "@/components/cards/EquipmentCard";
 import { LinkButton } from "@/components/ui/Button";
 import { SectionHeader } from "@/components/ui/SectionHeader";
-import { EQUIPMENT } from "@/lib/data";
+import { INVENTORY_RECORDS } from "@/lib/equipment/inventory-records";
+import type { EquipmentItem } from "@/lib/equipment/types";
+
+function toEquipmentItem(record: (typeof INVENTORY_RECORDS)[number]): EquipmentItem {
+  return {
+    id: record.itemId,
+    itemId: record.itemId,
+    name: record.equipmentName,
+    category: record.category,
+    categorySlug: record.categorySlug,
+    description: record.description,
+    dailyRate: record.dailyRate,
+    weeklyRate: record.weeklyRate,
+    monthlyRate: record.monthlyRate,
+    quantityAvailable: record.quantityAvailable,
+    quantityTotal: record.quantityTotal,
+    availabilityStatus: record.availabilityStatus,
+    imageUrl: record.imageUrl,
+    featured: record.featured,
+    comingSoon: record.comingSoon,
+  };
+}
 
 export function FeaturedEquipment() {
-  const featured = EQUIPMENT.filter((item) => item.featured);
+  const featured = INVENTORY_RECORDS.filter((item) => item.featured)
+    .slice(0, 4)
+    .map(toEquipmentItem);
 
   return (
     <section className="py-20 lg:py-28" id="featured">
@@ -17,7 +40,7 @@ export function FeaturedEquipment() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {featured.map((item, index) => (
             <div
-              key={item.id}
+              key={item.itemId}
               className="opacity-0-start animate-fade-in-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >

@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/data";
+import { PORTAL_PATH } from "@/lib/portal";
 
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/categories", label: "Categories" },
-  { href: "/equipment", label: "Inventory" },
+  { href: "/equipment", label: "Browse Equipment" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ] as const;
@@ -70,10 +71,20 @@ export function SiteNavbar() {
               {SITE.phone}
             </a>
             <Link
-              href="/equipment"
-              className="rounded-2xl bg-accent px-6 py-2.5 text-sm font-semibold text-canvas glow-accent transition-colors hover:bg-accent-hover"
+              href="/contact"
+              className="label-caps text-muted transition-colors hover:text-foreground"
             >
-              View Equipment
+              Request Quote
+            </Link>
+            <Link
+              href={PORTAL_PATH}
+              className={`rounded-2xl border px-5 py-2.5 text-sm font-semibold transition-colors ${
+                pathname === PORTAL_PATH
+                  ? "border-accent bg-accent/15 text-accent"
+                  : "border-accent/40 text-foreground hover:border-accent hover:bg-accent/10"
+              }`}
+            >
+              Customer Portal
             </Link>
           </div>
 
@@ -117,10 +128,16 @@ export function SiteNavbar() {
             </a>
             <p className="px-3 pb-1 text-sm text-muted">{SITE.location}</p>
             <Link
-              href="/equipment"
-              className="mt-2 rounded-2xl bg-accent px-4 py-3 text-center text-sm font-semibold text-canvas"
+              href={PORTAL_PATH}
+              className="mt-2 rounded-2xl border border-accent/40 px-4 py-3 text-center text-sm font-semibold text-foreground"
             >
-              View Equipment
+              Customer Portal
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-lg px-3 py-3 text-base font-medium text-accent"
+            >
+              Request a Quote
             </Link>
           </nav>
         </div>

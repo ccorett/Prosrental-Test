@@ -10,7 +10,7 @@ import { CATEGORIES } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Categories",
   description:
-    "Equipment rental categories including cleaning, DIY, construction, and facility sanitation.",
+    "Equipment rental categories including cleaning, construction, DIY, landscaping, access, sanitation, and event facilities.",
 };
 
 export default function CategoriesPage() {
@@ -48,10 +48,12 @@ export default function CategoriesPage() {
                     {category.description}
                   </p>
                   <p className="mt-2 text-sm text-muted">
-                    {category.itemCount}+ items available
+                    {category.itemCount} items available
                   </p>
                   <div className="mt-8 flex flex-wrap gap-4">
-                    <LinkButton href="/equipment">Browse Equipment</LinkButton>
+                    <LinkButton href={`/equipment?category=${category.id}`}>
+                      Browse Equipment
+                    </LinkButton>
                     <Link
                       href="/contact"
                       className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent-hover"

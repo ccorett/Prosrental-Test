@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  RESERVED
+  OUT_OF_SERVICE
+  COMING_SOON
+}
+
+model EquipmentInventory {
+  id                 String             @id @default(cuid())
+  itemId             String             @unique @map("item_id")
+  category           String
+  equipmentName      String             @map("equipment_name")
+  description        String
+  dailyRate          Decimal            @map("daily_rate") @db.Decimal(10, 2)
+  weeklyRate         Decimal            @map("weekly_rate") @db.Decimal(10, 2)
+  monthlyRate        Decimal            @map("monthly_rate") @db.Decimal(10, 2)
+  quantityAvailable  Int                @map("quantity_available")
+  quantityTotal      Int                @map("quantity_total")
+  availabilityStatus AvailabilityStatus @default(AVAILABLE) @map("availability_status")
+  imageUrl           String?            @map("image_url")
+  featured           Boolean            @default(false)
+  comingSoon         Boolean            @default(true) @map("coming_soon")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([featured])
+  @@index([availabilityStatus])
+  @@map("equipment_inventory")
+}

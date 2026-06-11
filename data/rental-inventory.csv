@@ -1,0 +1,51 @@
+Item ID,Category,Equipment Name,Daily Rate (TTD),Weekly Rate (TTD),Monthly Rate (TTD),Quantity in Stock,Reorder Level,Status
+CE001,Cleaning,Industrial Floor Scrubber,850,4250,12000,2,1,Active
+CE002,Cleaning,Commercial Carpet Extractor,650,3250,9000,2,1,Active
+CE003,Cleaning,Wet & Dry Vacuum,150,750,2200,4,2,Active
+CE004,Cleaning,Pressure Washer 2500 PSI,250,1250,3500,4,2,Active
+CE005,Cleaning,Pressure Washer 4000 PSI,400,2000,5500,2,1,Active
+CE006,Cleaning,Floor Polisher,300,1500,4200,2,1,Active
+CE007,Cleaning,Steam Cleaner,250,1250,3500,2,1,Active
+CE008,Cleaning,Air Mover Fan,75,375,1000,6,2,Active
+CE009,Cleaning,Dehumidifier,150,750,2200,4,2,Active
+CE010,Cleaning,Backpack Vacuum,100,500,1400,4,2,Active
+CT001,Construction,Portable Concrete Mixer,300,1500,4200,2,1,Active
+CT002,Construction,Plate Compactor,350,1750,5000,2,1,Active
+CT003,Construction,Jack Hammer,300,1500,4200,3,1,Active
+CT004,Construction,Rotary Hammer Drill,200,1000,2800,4,2,Active
+CT005,Construction,Demolition Hammer,350,1750,5000,2,1,Active
+CT006,Construction,Concrete Cutter,400,2000,5500,2,1,Active
+CT007,Construction,Tile Saw,200,1000,2800,2,1,Active
+CT008,Construction,Generator 3500W,250,1250,3500,3,1,Active
+CT009,Construction,Generator 6500W,450,2250,6500,2,1,Active
+CT010,Construction,Scissor Lift 19ft,1200,6000,18000,1,1,Active
+DT001,DIY Tools,Cordless Drill Kit,75,375,1000,8,3,Active
+DT002,DIY Tools,Impact Driver,75,375,1000,6,2,Active
+DT003,DIY Tools,Circular Saw,100,500,1400,4,2,Active
+DT004,DIY Tools,Jig Saw,75,375,1000,4,2,Active
+DT005,DIY Tools,Mitre Saw,150,750,2200,3,1,Active
+DT006,DIY Tools,Table Saw,250,1250,3500,2,1,Active
+DT007,DIY Tools,Angle Grinder,75,375,1000,6,2,Active
+DT008,DIY Tools,Heat Gun,50,250,700,4,2,Active
+DT009,DIY Tools,Orbital Sander,75,375,1000,4,2,Active
+DT010,DIY Tools,Air Compressor,200,1000,2800,2,1,Active
+LG001,Landscaping,Brush Cutter,150,750,2200,4,2,Active
+LG002,Landscaping,Lawn Mower,150,750,2200,4,2,Active
+LG003,Landscaping,Hedge Trimmer,100,500,1400,4,2,Active
+LG004,Landscaping,Chainsaw Small,150,750,2200,3,1,Active
+LG005,Landscaping,Chainsaw Large,250,1250,3500,2,1,Active
+LG006,Landscaping,Wood Chipper,600,3000,8500,1,1,Active
+HY001,Hygiene,Sanitary Bin 20L,20,40,75,100,20,Active
+HY002,Hygiene,Sanitary Bin 40L,30,60,120,50,10,Active
+HY003,Hygiene,Soap Dispenser,10,20,40,50,10,Active
+HY004,Hygiene,Paper Towel Dispenser,10,20,40,50,10,Active
+HY005,Hygiene,Toilet Paper Dispenser,10,20,40,50,10,Active
+HY006,Hygiene,Hand Sanitizer Stand,25,50,100,20,5,Active
+HY007,Hygiene,Portable Hand Wash Station,150,750,2200,4,1,Active
+EV001,Event Equipment,Luxury Restroom Trailer,3000,15000,45000,1,1,Active
+EV002,Event Equipment,Portable Toilet Unit,150,750,2200,20,5,Active
+EV003,Event Equipment,Hand Wash Basin Unit,100,500,1400,10,3,Active
+EQ001,Access Equipment,Extension Ladder 24ft,75,375,1000,6,2,Active
+EQ002,Access Equipment,Fibreglass Ladder 12ft,50,250,700,6,2,Active
+EQ003,Access Equipment,Scaffold Tower,250,1250,3500,4,1,Active
+EQ004,Access Equipment,Mobile Scaffold Set,350,1750,5000,2,1,Active

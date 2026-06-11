@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/data";
+import { PORTAL_PATH } from "@/lib/portal";
 
 const EQUIPMENT = [
   "Pressure Washers",
@@ -9,7 +10,12 @@ const EQUIPMENT = [
   "Power Tools",
   "Safety Gear",
 ] as const;
-const RESOURCES = ["Project Planning", "Maintenance Specs", "Locations"] as const;
+const RESOURCES = [
+  { label: "Customer Portal", href: PORTAL_PATH },
+  { label: "Project Planning", href: "/contact" },
+  { label: "Maintenance Specs", href: "/contact" },
+  { label: "Locations", href: "/contact" },
+] as const;
 const LEGAL = ["Terms of Service", "Privacy Policy", "Compliance"] as const;
 
 export function SiteFooter() {
@@ -22,8 +28,8 @@ export function SiteFooter() {
           <div>
             <p className="text-lg font-bold text-foreground">Pro Rentals</p>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
-              Industry standards and professional service for equipment rental
-              across construction, logistics, and power generation.
+              Professional equipment rentals for contractors, businesses,
+              homeowners, and facility managers in Tobago.
             </p>
             <p className="mt-4 space-y-1 text-sm">
               <a
@@ -31,6 +37,12 @@ export function SiteFooter() {
                 className="block font-medium text-foreground transition-colors hover:text-accent"
               >
                 {SITE.phone}
+              </a>
+              <a
+                href={`mailto:${SITE.email}`}
+                className="block text-muted transition-colors hover:text-accent"
+              >
+                {SITE.email}
               </a>
               <span className="block text-muted">{SITE.location}</span>
             </p>
@@ -56,12 +68,16 @@ export function SiteFooter() {
             <h3 className="label-caps text-foreground">Resources</h3>
             <ul className="mt-4 space-y-2.5">
               {RESOURCES.map((item) => (
-                <li key={item}>
+                <li key={item.label}>
                   <Link
-                    href="/contact"
-                    className="text-sm text-muted transition-colors hover:text-accent"
+                    href={item.href}
+                    className={`text-sm transition-colors hover:text-accent ${
+                      item.label === "Customer Portal"
+                        ? "font-semibold text-accent"
+                        : "text-muted"
+                    }`}
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}
@@ -85,9 +101,17 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <p className="label-caps mt-12 border-t border-border pt-8 text-center text-muted">
-          © {year} Pro Rentals Industrial. All rights reserved.
-        </p>
+        <div className="mt-12 flex flex-col items-center gap-4 border-t border-border pt-8 sm:flex-row sm:justify-between">
+          <p className="label-caps text-muted">
+            © {year} Pro Rentals Industrial. All rights reserved.
+          </p>
+          <Link
+            href={PORTAL_PATH}
+            className="inline-flex rounded-2xl border border-accent/40 bg-accent/10 px-6 py-2.5 text-sm font-semibold text-accent transition-colors hover:bg-accent/20"
+          >
+            Customer Portal
+          </Link>
+        </div>
       </Container>
     </footer>
   );
