@@ -1,7 +1,8 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useActionState } from "react";
+import { submitQuoteRequest, type QuoteRequestResult } from "@/lib/contact/actions";
 import { INVENTORY_RECORDS } from "@/lib/equipment/inventory-records";
 import { Button } from "@/components/ui/Button";
 
@@ -19,14 +20,12 @@ export function QuoteRequestForm({
   submitLabel = "Request a Quote",
   successTitle = "Quote request received",
 }: QuoteRequestFormProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const [state, action, pending] = useActionState<QuoteRequestResult, FormData>(
+    submitQuoteRequest,
+    {}
+  );
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
-  if (submitted) {
+  if (state.success) {
     return (
       <div className="rounded-xl border border-secondary/30 bg-secondary-muted p-8 text-center">
         <h3 className="text-xl font-semibold text-foreground">{successTitle}</h3>
@@ -38,7 +37,13 @@ export function QuoteRequestForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form action={action} className="space-y-5">
+      {state.error && (
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          {state.error}
+        </p>
+      )}
+
       <label className="block">
         <span className="text-sm font-medium text-foreground">Full name</span>
         <input type="text" name="fullName" required className={INPUT_CLASS} />
@@ -105,7 +110,7 @@ export function QuoteRequestForm({
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">
           <span className="text-sm font-medium text-foreground">Delivery required?</span>
-          <select name="delivery" required className={INPUT_CLASS}>
+          <select name="delivery" required className={INPUT_CLASS} defaultValue="no">
             <option value="yes">Yes</option>
             <option value="no">No</option>
           </select>
@@ -134,13 +139,10 @@ export function QuoteRequestForm({
         />
       </label>
 
-      <Button type="submit" size="lg" className="w-full sm:w-auto">
+      <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={pending}>
         <Send className="h-5 w-5" />
-        {submitLabel}
+        {pending ? "Sending..." : submitLabel}
       </Button>
-      <p className="text-xs text-muted">
-        Client-side demo only—no data is sent to a server yet.
-      </p>
     </form>
   );
 }

@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: "Portal Register",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalRegisterPage() {
   const customer = await getSessionCustomer();
   if (customer) {

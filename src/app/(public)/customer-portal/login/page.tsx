@@ -9,6 +9,8 @@ export const metadata: Metadata = {
   title: "Portal Login",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalLoginPage() {
   const customer = await getSessionCustomer();
   if (customer) {

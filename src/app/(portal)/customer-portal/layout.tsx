@@ -2,6 +2,8 @@ import { PortalShell } from "@/components/portal/app/PortalShell";
 import { requireCustomer } from "@/lib/auth/session";
 import { requireDatabaseUrl } from "@/lib/db/require-database";
 
+export const dynamic = "force-dynamic";
+
 export default async function PortalAppLayout({
   children,
 }: {

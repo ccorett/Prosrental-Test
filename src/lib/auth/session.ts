@@ -48,41 +48,49 @@ export async function destroySession(): Promise<void> {
 }
 
 export async function getSessionCustomer(): Promise<SessionCustomer | null> {
+  if (!process.env.DATABASE_URL) {
+    return null;
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
-  const session = await prisma.customerSession.findUnique({
-    where: { token },
-    include: {
-      customer: {
-        select: {
-          id: true,
-          fullName: true,
-          email: true,
-          phone: true,
-          companyName: true,
-          address: true,
-          status: true,
-          role: true,
+  try {
+    const session = await prisma.customerSession.findUnique({
+      where: { token },
+      include: {
+        customer: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            phone: true,
+            companyName: true,
+            address: true,
+            status: true,
+            role: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (!session || session.expiresAt < new Date()) {
-    if (session) {
-      await prisma.customerSession.delete({ where: { id: session.id } });
+    if (!session || session.expiresAt < new Date()) {
+      if (session) {
+        await prisma.customerSession.delete({ where: { id: session.id } });
+      }
+      cookieStore.delete(SESSION_COOKIE);
+      return null;
     }
-    cookieStore.delete(SESSION_COOKIE);
+
+    if (session.customer.status !== "ACTIVE") {
+      return null;
+    }
+
+    return session.customer;
+  } catch {
     return null;
   }
-
-  if (session.customer.status !== "ACTIVE") {
-    return null;
-  }
-
-  return session.customer;
 }
 
 export async function requireCustomer(): Promise<SessionCustomer> {

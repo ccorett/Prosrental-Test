@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     "Manage Pro Rentals bookings, quotations, invoices, documents, and service requests online.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function CustomerPortalPage() {
   const customer = await getSessionCustomer();
   if (customer) {
