@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { CustomerDemoHelper } from "@/components/portal/auth/CustomerDemoHelper";
 import { LoginForm } from "@/components/portal/auth/LoginForm";
 import { Container } from "@/components/ui/Container";
 import { getSessionCustomer } from "@/lib/auth/session";
@@ -27,6 +28,7 @@ export default async function PortalLoginPage() {
         </p>
         <div className="card-industrial mt-8 p-6 sm:p-8">
           <LoginForm />
+          <CustomerDemoHelper />
         </div>
         <p className="mt-6 text-center text-sm text-muted">
           No account?{" "}

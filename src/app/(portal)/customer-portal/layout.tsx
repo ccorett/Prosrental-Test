@@ -1,5 +1,5 @@
 import { PortalShell } from "@/components/portal/app/PortalShell";
-import { requireCustomer } from "@/lib/auth/session";
+import { requireCustomer } from "@/lib/access/guards";
 import { requireDatabaseUrl } from "@/lib/db/require-database";
 
 export const dynamic = "force-dynamic";

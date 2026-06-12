@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { QuoteRequestFormLoader } from "@/components/forms/QuoteRequestFormLoader";
+import { getPublicEquipmentOptions } from "@/lib/equipment/queries";
 import { PageHero } from "@/components/sections/PageHero";
 import { LinkButton } from "@/components/ui/Button";
 import { MapPlaceholder } from "@/components/ui/MapPlaceholder";
@@ -14,7 +15,10 @@ export const metadata: Metadata = {
     "Contact Pro Rentals in Plymouth, Tobago. Request a quote, call 868 734 9490, or email info@prorentals.co",
 };
 
-export default function ContactPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ContactPage() {
+  const equipmentOptions = await getPublicEquipmentOptions();
   const whatsappUrl = getWhatsAppUrl(
     SITE.whatsapp,
     "Hi Pro Rentals! I'd like to request a quote."
@@ -122,7 +126,7 @@ export default function ContactPage() {
                     <p className="text-sm text-muted">Loading quote form...</p>
                   }
                 >
-                  <QuoteRequestFormLoader />
+                  <QuoteRequestFormLoader equipmentOptions={equipmentOptions} />
                 </Suspense>
               </div>
             </div>

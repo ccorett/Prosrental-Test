@@ -3,7 +3,6 @@
 import { Send } from "lucide-react";
 import { useActionState } from "react";
 import { submitQuoteRequest, type QuoteRequestResult } from "@/lib/contact/actions";
-import { INVENTORY_RECORDS } from "@/lib/equipment/inventory-records";
 import { Button } from "@/components/ui/Button";
 
 const INPUT_CLASS =
@@ -11,13 +10,15 @@ const INPUT_CLASS =
 
 type QuoteRequestFormProps = {
   defaultEquipment?: string;
+  equipmentOptions?: { itemId: string; name: string }[];
   submitLabel?: string;
   successTitle?: string;
 };
 
 export function QuoteRequestForm({
   defaultEquipment = "",
-  submitLabel = "Request a Quote",
+  equipmentOptions = [],
+  submitLabel = "Submit request",
   successTitle = "Quote request received",
 }: QuoteRequestFormProps) {
   const [state, action, pending] = useActionState<QuoteRequestResult, FormData>(
@@ -84,8 +85,8 @@ export function QuoteRequestForm({
           placeholder="e.g. Floor Scrubber, Scissor Lift"
         />
         <datalist id="equipment-options">
-          {INVENTORY_RECORDS.map((item) => (
-            <option key={item.itemId} value={item.equipmentName} />
+          {equipmentOptions.map((item) => (
+            <option key={item.itemId} value={item.name} />
           ))}
         </datalist>
       </label>

@@ -90,7 +90,9 @@ function mapStatus(status: string): AvailabilityStatus {
   const normalized = status.trim().toLowerCase();
   if (normalized === "active" || normalized === "available") return "AVAILABLE";
   if (normalized === "reserved") return "RESERVED";
-  if (normalized === "out of service") return "OUT_OF_SERVICE";
+  if (normalized === "out of service" || normalized === "out of stock") {
+    return "OUT_OF_STOCK";
+  }
   if (normalized === "coming soon") return "COMING_SOON";
   return "AVAILABLE";
 }

@@ -10,8 +10,27 @@ datasource db {
 enum AvailabilityStatus {
   AVAILABLE
   RESERVED
-  OUT_OF_SERVICE
+  OUT_OF_STOCK
   COMING_SOON
+}
+
+enum StockMovementType {
+  ADDED_STOCK
+  REMOVED_STOCK
+  RESERVED
+  RELEASED_RESERVATION
+  CHECKED_OUT
+  RETURNED
+  DAMAGED
+  ADJUSTED
+}
+
+enum ConditionStatus {
+  NEW
+  GOOD
+  FAIR
+  NEEDS_REPAIR
+  OUT_OF_SERVICE
 }
 
 enum CustomerStatus {
@@ -29,6 +48,9 @@ enum UserRole {
 enum BookingRequestStatus {
   PENDING
   APPROVED
+  SCHEDULED
+  ACTIVE
+  COMPLETED
   REJECTED
   CANCELLED
 }
@@ -93,27 +115,70 @@ enum ReadStatus {
   UNREAD
 }
 
+model EquipmentCategory {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String?
+  displayOrder Int      @default(0) @map("display_order")
+  imageUrl     String?  @map("image_url")
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  equipment EquipmentInventory[]
+
+  @@index([active, displayOrder])
+  @@map("equipment_categories")
+}
+
 model EquipmentInventory {
   id                 String             @id @default(cuid())
+  categoryId         String             @map("category_id")
   itemId             String             @unique @map("item_id")
+  slug               String             @unique
   category           String
   equipmentName      String             @map("equipment_name")
   description        String
+  shortDescription   String?            @map("short_description")
+  fullDescription    String?            @map("full_description") @db.Text
+  specifications     String?            @db.Text
   dailyRate          Decimal            @map("daily_rate") @db.Decimal(10, 2)
   weeklyRate         Decimal            @map("weekly_rate") @db.Decimal(10, 2)
   monthlyRate        Decimal            @map("monthly_rate") @db.Decimal(10, 2)
-  quantityAvailable  Int                @map("quantity_available")
-  quantityTotal      Int                @map("quantity_total")
-  availabilityStatus AvailabilityStatus @default(AVAILABLE) @map("availability_status")
+  depositAmount      Decimal            @default(0) @map("deposit_amount") @db.Decimal(10, 2)
+  quantityAvailable          Int                @map("quantity_available")
+  quantityTotal              Int                @map("quantity_total")
+  quantityReserved           Int                @default(0) @map("quantity_reserved")
+  reorderLevel               Int                @default(1) @map("reorder_level")
+  lowStockThreshold          Int                @default(1) @map("low_stock_threshold")
+  availabilityStatus         AvailabilityStatus @default(AVAILABLE) @map("availability_status")
+  manualAvailabilityOverride Boolean            @default(false) @map("manual_availability_override")
+  overrideStatus             AvailabilityStatus? @map("override_status")
+  overrideReason             String?            @map("override_reason")
+  overrideById               String?            @map("override_by_id")
+  overrideAt                 DateTime?          @map("override_at")
+  conditionStatus            ConditionStatus    @default(GOOD) @map("condition_status")
   imageUrl           String?            @map("image_url")
+  galleryImages      String[]           @default([]) @map("gallery_images")
   featured           Boolean            @default(false)
+  publicVisible      Boolean            @default(true) @map("public_visible")
   comingSoon         Boolean            @default(true) @map("coming_soon")
+  sortOrder          Int                @default(0) @map("sort_order")
   createdAt          DateTime           @default(now()) @map("created_at")
   updatedAt          DateTime           @updatedAt @map("updated_at")
 
+  equipmentCategory EquipmentCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  overrideBy        Employee?         @relation("EquipmentOverrideBy", fields: [overrideById], references: [id], onDelete: SetNull)
+  stockMovements    EquipmentStockMovement[]
+
+  @@index([categoryId])
+  @@index([overrideById])
   @@index([category])
   @@index([featured])
+  @@index([publicVisible])
   @@index([availabilityStatus])
+  @@index([sortOrder])
   @@map("equipment_inventory")
 }
 
@@ -165,14 +230,20 @@ model BookingRequest {
   deliveryRequired Boolean              @default(false) @map("delivery_required")
   deliveryAddress  String?              @map("delivery_address")
   requestStatus    BookingRequestStatus @default(PENDING) @map("request_status")
+  scheduledAt      DateTime?            @map("scheduled_at")
+  approvedById     String?              @map("approved_by_id")
+  approvedAt       DateTime?            @map("approved_at")
+  managerNotes     String?              @map("manager_notes")
   notes            String?
   createdAt        DateTime             @default(now()) @map("created_at")
   updatedAt        DateTime             @updatedAt @map("updated_at")
 
-  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  customer   Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  approvedBy Employee? @relation("BookingApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
 
   @@index([customerId])
   @@index([requestStatus])
+  @@index([approvedById])
   @@map("booking_requests")
 }
 
@@ -283,4 +354,535 @@ model Notification {
   @@index([customerId])
   @@index([readStatus])
   @@map("notifications")
+}
+
+// --- Employee Portal (Phase 2) ---
+
+enum StaffRoleCode {
+  EMPLOYEE
+  DRIVER
+  MECHANIC
+  SUPERVISOR
+  MANAGER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  DISABLED
+  PENDING
+}
+
+enum EmployeeModule {
+  DASHBOARD
+  EQUIPMENT_OPERATIONS
+  MAINTENANCE
+  INVENTORY
+  EQUIPMENT_LISTINGS
+  MANAGER_CONTROL
+  FLEET_DELIVERY
+  HR
+  SAFETY_COMPLIANCE
+  NOTIFICATIONS
+  PROFILE
+  ADMIN_MANAGEMENT
+}
+
+enum AssignedJobStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum DispatchStatus {
+  SCHEDULED
+  DISPATCHED
+  DELIVERED
+  CANCELLED
+}
+
+enum ReturnStatus {
+  PENDING
+  INSPECTED
+  COMPLETED
+}
+
+enum InspectionResult {
+  PASSED
+  FAILED
+  PENDING
+}
+
+enum MaintenanceScheduleStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  OVERDUE
+}
+
+enum RepairTicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum PurchaseRequestStatus {
+  DRAFT
+  PENDING
+  SUPERVISOR_APPROVED
+  APPROVED
+  REJECTED
+  ORDERED
+}
+
+enum DeliveryScheduleStatus {
+  SCHEDULED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum FleetVehicleStatus {
+  ACTIVE
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum LeaveRequestStatus {
+  PENDING
+  SUPERVISOR_APPROVED
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+  CLOSED
+}
+
+enum EmployeeReadStatus {
+  READ
+  UNREAD
+}
+
+enum AuditActionType {
+  ROLE_CHANGE
+  ACCOUNT_CREATED
+  ACCOUNT_DELETED
+  ACCOUNT_DISABLED
+  APPROVAL
+  EQUIPMENT_DISPATCH
+  EQUIPMENT_RETURN
+  MAINTENANCE_UPDATE
+  INVENTORY_CHANGE
+  EQUIPMENT_LISTING_CREATED
+  EQUIPMENT_LISTING_UPDATED
+  EQUIPMENT_LISTING_ARCHIVED
+  EQUIPMENT_LISTING_DELETED
+  EQUIPMENT_STOCK_CHANGED
+  EQUIPMENT_OVERRIDE_APPLIED
+  EQUIPMENT_OVERRIDE_REMOVED
+  BOOKING_APPROVED
+  BOOKING_REJECTED
+  BOOKING_SCHEDULED
+  BOOKING_STATUS_CHANGED
+  QUOTE_UPDATED
+  INVOICE_UPDATED
+  CATEGORY_UPDATED
+  CUSTOMER_STATUS_CHANGED
+  SYSTEM_SETTING
+  PERMISSION_CHANGE
+  HR_APPROVAL
+  QUOTE_APPROVED
+  SUPER_ADMIN_OVERRIDE
+}
+
+model EmployeeRole {
+  id          String        @id @default(cuid())
+  code        StaffRoleCode @unique
+  label       String
+  level       Int
+  description String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  employees   Employee[]
+  permissions EmployeePermission[]
+
+  @@map("employee_roles")
+}
+
+model EmployeePermission {
+  id          String         @id @default(cuid())
+  roleId      String         @map("role_id")
+  module      EmployeeModule
+  canView     Boolean        @default(false) @map("can_view")
+  canCreate   Boolean        @default(false) @map("can_create")
+  canEdit     Boolean        @default(false) @map("can_edit")
+  canDelete   Boolean        @default(false) @map("can_delete")
+  canApprove  Boolean        @default(false) @map("can_approve")
+  canOverride Boolean        @default(false) @map("can_override")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  role EmployeeRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, module])
+  @@index([roleId])
+  @@map("employee_permissions")
+}
+
+model Employee {
+  id           String         @id @default(cuid())
+  fullName     String         @map("full_name")
+  email        String         @unique
+  phone        String?
+  department   String?
+  jobTitle     String?        @map("job_title")
+  passwordHash String         @map("password_hash")
+  status       EmployeeStatus @default(ACTIVE)
+  roleId       String         @map("role_id")
+  isProtected  Boolean        @default(false) @map("is_protected")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  role                EmployeeRole          @relation(fields: [roleId], references: [id])
+  sessions            EmployeeSession[]
+  assignedJobs        AssignedJob[]
+  dispatches          EquipmentDispatch[]   @relation("DispatchDriver")
+  returns             EquipmentReturn[]     @relation("ReturnInspector")
+  inspections         EquipmentInspection[]
+  maintenanceAssigned MaintenanceSchedule[] @relation("MaintenanceAssignee")
+  repairTickets       RepairTicket[]        @relation("RepairAssignee")
+  purchaseRequests    PurchaseRequest[]     @relation("PurchaseRequester")
+  deliveries          DeliverySchedule[]    @relation("DeliveryDriver")
+  leaveRequests       LeaveRequest[]
+  documents           EmployeeDocument[]
+  incidentReports     IncidentReport[]      @relation("IncidentReporter")
+  notifications       EmployeeNotification[]
+  auditLogs           AuditLog[]            @relation("AuditActor")
+  equipmentOverrides  EquipmentInventory[]  @relation("EquipmentOverrideBy")
+  stockMovements      EquipmentStockMovement[]
+  bookingsApproved    BookingRequest[]       @relation("BookingApprovedBy")
+  assignedVehicles    FleetVehicle[]         @relation("VehicleDriver")
+
+  @@index([roleId])
+  @@index([status])
+  @@map("employees")
+}
+
+model EquipmentStockMovement {
+  id                        String            @id @default(cuid())
+  equipmentId               String            @map("equipment_id")
+  movementType              StockMovementType @map("movement_type")
+  quantity                  Int
+  previousQuantityAvailable Int               @map("previous_quantity_available")
+  newQuantityAvailable      Int               @map("new_quantity_available")
+  reason                    String?
+  referenceType             String?           @map("reference_type")
+  referenceId               String?           @map("reference_id")
+  changedById               String?           @map("changed_by_id")
+  createdAt                 DateTime          @default(now()) @map("created_at")
+
+  equipment EquipmentInventory @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  changedBy Employee?          @relation(fields: [changedById], references: [id], onDelete: SetNull)
+
+  @@index([equipmentId])
+  @@index([changedById])
+  @@index([createdAt])
+  @@map("equipment_stock_movements")
+}
+
+model EmployeeSession {
+  id         String   @id @default(cuid())
+  employeeId String   @map("employee_id")
+  token      String   @unique
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("employee_sessions")
+}
+
+model AssignedJob {
+  id          String            @id @default(cuid())
+  employeeId  String            @map("employee_id")
+  title       String
+  description String?
+  status      AssignedJobStatus @default(PENDING)
+  dueDate     DateTime?         @map("due_date")
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([status])
+  @@map("assigned_jobs")
+}
+
+model EquipmentDispatch {
+  id            String         @id @default(cuid())
+  equipmentName String         @map("equipment_name")
+  equipmentId   String?        @map("equipment_id")
+  customerName  String         @map("customer_name")
+  destination   String
+  driverId      String?        @map("driver_id")
+  status        DispatchStatus @default(SCHEDULED)
+  scheduledAt   DateTime       @map("scheduled_at")
+  notes         String?
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  driver Employee? @relation("DispatchDriver", fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@index([driverId])
+  @@index([status])
+  @@map("equipment_dispatches")
+}
+
+model EquipmentReturn {
+  id            String       @id @default(cuid())
+  equipmentName String       @map("equipment_name")
+  equipmentId   String?      @map("equipment_id")
+  customerName  String       @map("customer_name")
+  inspectorId   String?      @map("inspector_id")
+  status        ReturnStatus @default(PENDING)
+  returnedAt    DateTime     @map("returned_at")
+  notes         String?
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  inspector Employee? @relation("ReturnInspector", fields: [inspectorId], references: [id], onDelete: SetNull)
+
+  @@index([inspectorId])
+  @@index([status])
+  @@map("equipment_returns")
+}
+
+model EquipmentInspection {
+  id            String           @id @default(cuid())
+  equipmentName String           @map("equipment_name")
+  equipmentId   String?          @map("equipment_id")
+  inspectorId   String           @map("inspector_id")
+  result        InspectionResult @default(PENDING)
+  notes         String?
+  inspectedAt   DateTime         @map("inspected_at")
+  createdAt     DateTime         @default(now()) @map("created_at")
+
+  inspector Employee @relation(fields: [inspectorId], references: [id], onDelete: Cascade)
+
+  @@index([inspectorId])
+  @@map("equipment_inspections")
+}
+
+model MaintenanceSchedule {
+  id            String                  @id @default(cuid())
+  equipmentName String                  @map("equipment_name")
+  equipmentId   String?                 @map("equipment_id")
+  assigneeId    String?                 @map("assignee_id")
+  taskType      String                  @map("task_type")
+  status        MaintenanceScheduleStatus @default(SCHEDULED)
+  scheduledAt   DateTime                @map("scheduled_at")
+  completedAt   DateTime?               @map("completed_at")
+  notes         String?
+  createdAt     DateTime                @default(now()) @map("created_at")
+  updatedAt     DateTime                @updatedAt @map("updated_at")
+
+  assignee Employee? @relation("MaintenanceAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@index([assigneeId])
+  @@index([status])
+  @@map("maintenance_schedules")
+}
+
+model RepairTicket {
+  id            String             @id @default(cuid())
+  equipmentName String             @map("equipment_name")
+  equipmentId   String?            @map("equipment_id")
+  assigneeId    String?            @map("assignee_id")
+  title         String
+  description   String
+  status        RepairTicketStatus @default(OPEN)
+  priority      ServicePriority    @default(MEDIUM)
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+
+  assignee Employee? @relation("RepairAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@index([assigneeId])
+  @@index([status])
+  @@map("repair_tickets")
+}
+
+model InventoryItem {
+  id                String             @id @default(cuid())
+  sku               String             @unique
+  name              String
+  category          String
+  quantityOnHand    Int                @map("quantity_on_hand")
+  reorderLevel      Int                @map("reorder_level")
+  unit              String             @default("unit")
+  location          String?
+  availabilityStatus AvailabilityStatus @default(AVAILABLE) @map("availability_status")
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@map("inventory_items")
+}
+
+model PurchaseRequest {
+  id          String                @id @default(cuid())
+  requesterId String                @map("requester_id")
+  itemName    String                @map("item_name")
+  quantity    Int
+  estimatedCost Decimal             @map("estimated_cost") @db.Decimal(10, 2)
+  status      PurchaseRequestStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime              @default(now()) @map("created_at")
+  updatedAt   DateTime              @updatedAt @map("updated_at")
+
+  requester Employee @relation("PurchaseRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+
+  @@index([requesterId])
+  @@index([status])
+  @@map("purchase_requests")
+}
+
+model DeliverySchedule {
+  id          String                 @id @default(cuid())
+  driverId    String?                @map("driver_id")
+  customerName String                @map("customer_name")
+  destination String
+  equipmentSummary String            @map("equipment_summary")
+  status      DeliveryScheduleStatus @default(SCHEDULED)
+  scheduledAt DateTime               @map("scheduled_at")
+  notes       String?
+  createdAt   DateTime               @default(now()) @map("created_at")
+  updatedAt   DateTime               @updatedAt @map("updated_at")
+
+  driver Employee? @relation("DeliveryDriver", fields: [driverId], references: [id], onDelete: SetNull)
+
+  @@index([driverId])
+  @@index([status])
+  @@map("delivery_schedules")
+}
+
+model FleetVehicle {
+  id                String             @id @default(cuid())
+  plateNumber       String             @unique @map("plate_number")
+  make              String
+  model             String
+  year              Int
+  status            FleetVehicleStatus @default(ACTIVE)
+  assignedDriverId  String?            @map("assigned_driver_id")
+  lastServiceAt     DateTime?          @map("last_service_at")
+  notes             String?
+  createdAt         DateTime           @default(now()) @map("created_at")
+  updatedAt         DateTime           @updatedAt @map("updated_at")
+
+  assignedDriver Employee? @relation("VehicleDriver", fields: [assignedDriverId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([assignedDriverId])
+  @@map("fleet_vehicles")
+}
+
+model LeaveRequest {
+  id         String             @id @default(cuid())
+  employeeId String             @map("employee_id")
+  startDate  DateTime           @map("start_date")
+  endDate    DateTime           @map("end_date")
+  reason     String
+  status     LeaveRequestStatus @default(PENDING)
+  createdAt  DateTime           @default(now()) @map("created_at")
+  updatedAt  DateTime           @updatedAt @map("updated_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([status])
+  @@map("leave_requests")
+}
+
+model EmployeeDocument {
+  id         String   @id @default(cuid())
+  employeeId String   @map("employee_id")
+  title      String
+  fileUrl    String   @map("file_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("employee_documents")
+}
+
+model IncidentReport {
+  id           String           @id @default(cuid())
+  reporterId   String           @map("reporter_id")
+  title        String
+  description  String
+  severity     IncidentSeverity @default(MEDIUM)
+  status       IncidentStatus   @default(OPEN)
+  location     String?
+  occurredAt   DateTime         @map("occurred_at")
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt @map("updated_at")
+
+  reporter Employee @relation("IncidentReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@index([reporterId])
+  @@index([status])
+  @@map("incident_reports")
+}
+
+model EmployeeNotification {
+  id         String             @id @default(cuid())
+  employeeId String             @map("employee_id")
+  title      String
+  message    String
+  readStatus EmployeeReadStatus @default(UNREAD) @map("read_status")
+  createdAt  DateTime           @default(now()) @map("created_at")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([readStatus])
+  @@map("employee_notifications")
+}
+
+model AuditLog {
+  id           String          @id @default(cuid())
+  actorId      String?         @map("actor_id")
+  action       AuditActionType
+  entityType   String          @map("entity_type")
+  entityId     String?         @map("entity_id")
+  description  String
+  metadata     Json?
+  createdAt    DateTime        @default(now()) @map("created_at")
+
+  actor Employee? @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

@@ -3,7 +3,7 @@ import { EquipmentCatalog } from "@/components/equipment/EquipmentCatalog";
 import { CtaBanner } from "@/components/sections/CtaBanner";
 import { PageHero } from "@/components/sections/PageHero";
 import { Container } from "@/components/ui/Container";
-import { getAllEquipment } from "@/lib/equipment/queries";
+import { getActiveCategories, getAllEquipment } from "@/lib/equipment/queries";
 
 export const metadata: Metadata = {
   title: "Equipment Catalogue",
@@ -19,7 +19,10 @@ type PageProps = {
 
 export default async function EquipmentPage({ searchParams }: PageProps) {
   const { category } = await searchParams;
-  const equipment = await getAllEquipment();
+  const [equipment, categories] = await Promise.all([
+    getAllEquipment(),
+    getActiveCategories(),
+  ]);
 
   return (
     <>
@@ -30,7 +33,11 @@ export default async function EquipmentPage({ searchParams }: PageProps) {
       />
       <section className="py-16 lg:py-24">
         <Container>
-          <EquipmentCatalog equipment={equipment} initialCategory={category ?? "all"} />
+          <EquipmentCatalog
+            equipment={equipment}
+            categories={categories}
+            initialCategory={category ?? "all"}
+          />
         </Container>
       </section>
 

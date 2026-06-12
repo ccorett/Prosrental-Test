@@ -1,6 +1,6 @@
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteNavbar } from "@/components/layout/SiteNavbar";
-import { CustomerPortalCta } from "@/components/portal/CustomerPortalCta";
+import { EmployeePortalCta } from "@/components/employee-portal/EmployeePortalCta";
 
 export default function PublicLayout({
   children,
@@ -11,7 +11,7 @@ export default function PublicLayout({
     <>
       <SiteNavbar />
       <main className="flex-1">{children}</main>
-      <CustomerPortalCta />
+      <EmployeePortalCta />
       <SiteFooter />
     </>
   );

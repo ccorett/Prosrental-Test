@@ -3,22 +3,20 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { EquipmentCard } from "@/components/cards/EquipmentCard";
-import {
-  EQUIPMENT_CATEGORY_LABELS,
-  EQUIPMENT_CATEGORY_SLUGS,
-} from "@/lib/equipment/categories";
-import type { EquipmentItem } from "@/lib/equipment/types";
+import type { EquipmentCategory, EquipmentItem } from "@/lib/equipment/types";
 
 const INPUT_CLASS =
   "w-full rounded-lg border border-border bg-surface py-3 pl-11 pr-4 text-foreground placeholder:text-muted/60 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent";
 
 type EquipmentCatalogProps = {
   equipment: EquipmentItem[];
+  categories: EquipmentCategory[];
   initialCategory?: string;
 };
 
 export function EquipmentCatalog({
   equipment,
+  categories,
   initialCategory = "all",
 }: EquipmentCatalogProps) {
   const [query, setQuery] = useState("");
@@ -63,9 +61,9 @@ export function EquipmentCatalog({
           aria-label="Filter by category"
         >
           <option value="all">All categories</option>
-          {EQUIPMENT_CATEGORY_SLUGS.map((slug) => (
-            <option key={slug} value={slug}>
-              {EQUIPMENT_CATEGORY_LABELS[slug]}
+          {categories.map((category) => (
+            <option key={category.id} value={category.slug}>
+              {category.name}
             </option>
           ))}
         </select>

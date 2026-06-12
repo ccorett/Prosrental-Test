@@ -125,7 +125,12 @@ export async function getCustomerRentalsForSelect(customerId: string) {
 export async function getBookableEquipment() {
   ensurePortalDatabase();
   return prisma.equipmentInventory.findMany({
-    where: { availabilityStatus: "AVAILABLE" },
+    where: {
+      publicVisible: true,
+      availabilityStatus: "AVAILABLE",
+      quantityAvailable: { gt: 0 },
+      conditionStatus: { not: "OUT_OF_SERVICE" },
+    },
     orderBy: [{ featured: "desc" }, { equipmentName: "asc" }],
     select: {
       itemId: true,

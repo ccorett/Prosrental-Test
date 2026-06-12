@@ -1,30 +1,21 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/data";
+import { getActiveCategories } from "@/lib/equipment/queries";
+import { EMPLOYEE_PORTAL_PATH } from "@/lib/employee-portal/nav";
 import { PORTAL_PATH } from "@/lib/portal";
-
-const EQUIPMENT_CATEGORIES = [
-  { label: "DIY Tools", href: "/equipment?category=diy" },
-  { label: "Construction Equipment", href: "/equipment?category=construction" },
-  { label: "Cleaning Equipment", href: "/equipment?category=cleaning" },
-  { label: "Landscaping Equipment", href: "/equipment?category=landscaping" },
-  { label: "Access Equipment", href: "/equipment?category=access" },
-  {
-    label: "Sanitation & Hygiene Equipment",
-    href: "/equipment?category=sanitation",
-  },
-  { label: "Event & Site Facilities", href: "/equipment?category=event" },
-] as const;
 
 const RESOURCES = [
   { label: "Customer Portal", href: PORTAL_PATH },
+  { label: "Employee Portal", href: EMPLOYEE_PORTAL_PATH },
   { label: "Locations", href: "/contact" },
 ] as const;
 
 const LEGAL = ["Terms of Service", "Privacy Policy", "Compliance"] as const;
 
-export function SiteFooter() {
+export async function SiteFooter() {
   const year = new Date().getFullYear();
+  const categories = await getActiveCategories();
 
   return (
     <footer className="border-t border-border bg-canvas pt-14 pb-8">
@@ -58,13 +49,13 @@ export function SiteFooter() {
           <div>
             <h3 className="label-caps text-foreground">Equipment Categories</h3>
             <ul className="mt-4 space-y-2.5">
-              {EQUIPMENT_CATEGORIES.map((item) => (
-                <li key={item.label}>
+              {categories.map((category) => (
+                <li key={category.id}>
                   <Link
-                    href={item.href}
+                    href={`/equipment?category=${category.slug}`}
                     className="text-sm text-muted transition-colors hover:text-accent"
                   >
-                    {item.label}
+                    {category.name}
                   </Link>
                 </li>
               ))}
@@ -79,7 +70,7 @@ export function SiteFooter() {
                   <Link
                     href={item.href}
                     className={`text-sm transition-colors hover:text-accent ${
-                      item.label === "Customer Portal"
+                      item.label === "Customer Portal" || item.label === "Employee Portal"
                         ? "font-semibold text-accent"
                         : "text-muted"
                     }`}

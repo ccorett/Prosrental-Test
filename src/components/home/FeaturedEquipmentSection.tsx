@@ -5,6 +5,8 @@ import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { getFeaturedEquipment } from "@/lib/equipment/queries";
 
+export const dynamic = "force-dynamic";
+
 export async function FeaturedEquipmentSection() {
   const featured = await getFeaturedEquipment(4);
 

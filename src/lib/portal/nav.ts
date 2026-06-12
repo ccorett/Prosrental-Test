@@ -50,6 +50,8 @@ export function shouldHidePublicCta(pathname: string): boolean {
   return (
     pathname === PORTAL_PATH ||
     isPortalAppPath(pathname) ||
-    isPortalAuthPath(pathname)
+    isPortalAuthPath(pathname) ||
+    pathname === "/employee-portal" ||
+    pathname.startsWith("/employee-portal/")
   );
 }
