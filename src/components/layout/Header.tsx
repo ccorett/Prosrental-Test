@@ -70,6 +70,8 @@ export function Header() {
         <div className="hidden items-center gap-3 sm:flex">
           <a
             href={SITE.phoneHref}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted transition-all duration-200 hover:bg-surface-elevated hover:text-foreground"
           >
             <Phone className="h-4 w-4 text-secondary" aria-hidden />
@@ -112,6 +114,8 @@ export function Header() {
             })}
             <a
               href={SITE.phoneHref}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-2 inline-flex items-center gap-2 rounded-lg px-4 py-3 text-base font-semibold text-secondary"
             >
               <Phone className="h-5 w-5" />

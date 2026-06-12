@@ -1,4 +1,3 @@
-import { RentalCostEstimatorSection } from "@/components/estimator/RentalCostEstimatorSection";
 import { CompanyOverviewSection } from "@/components/home/CompanyOverviewSection";
 import { CorePrinciplesSection } from "@/components/home/CorePrinciplesSection";
 import { FeaturedEquipmentSection } from "@/components/home/FeaturedEquipmentSection";
@@ -15,7 +14,6 @@ export default function HomePage() {
       <FeaturedEquipmentSection />
       <MissionSection />
       <ServiceHighlightsSection />
-      <RentalCostEstimatorSection />
       <CorePrinciplesSection />
       <CtaBanner />
     </>

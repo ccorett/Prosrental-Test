@@ -3,19 +3,24 @@ import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/data";
 import { PORTAL_PATH } from "@/lib/portal";
 
-const EQUIPMENT = [
-  "Pressure Washers",
-  "Floor Scrubbers",
-  "Sanitary Bins",
-  "Power Tools",
-  "Safety Gear",
+const EQUIPMENT_CATEGORIES = [
+  { label: "DIY Tools", href: "/equipment?category=diy" },
+  { label: "Construction Equipment", href: "/equipment?category=construction" },
+  { label: "Cleaning Equipment", href: "/equipment?category=cleaning" },
+  { label: "Landscaping Equipment", href: "/equipment?category=landscaping" },
+  { label: "Access Equipment", href: "/equipment?category=access" },
+  {
+    label: "Sanitation & Hygiene Equipment",
+    href: "/equipment?category=sanitation",
+  },
+  { label: "Event & Site Facilities", href: "/equipment?category=event" },
 ] as const;
+
 const RESOURCES = [
   { label: "Customer Portal", href: PORTAL_PATH },
-  { label: "Project Planning", href: "/contact" },
-  { label: "Maintenance Specs", href: "/contact" },
   { label: "Locations", href: "/contact" },
 ] as const;
+
 const LEGAL = ["Terms of Service", "Privacy Policy", "Compliance"] as const;
 
 export function SiteFooter() {
@@ -34,6 +39,8 @@ export function SiteFooter() {
             <p className="mt-4 space-y-1 text-sm">
               <a
                 href={SITE.phoneHref}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block font-medium text-foreground transition-colors hover:text-accent"
               >
                 {SITE.phone}
@@ -49,15 +56,15 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h3 className="label-caps text-foreground">Equipment</h3>
+            <h3 className="label-caps text-foreground">Equipment Categories</h3>
             <ul className="mt-4 space-y-2.5">
-              {EQUIPMENT.map((item) => (
-                <li key={item}>
+              {EQUIPMENT_CATEGORIES.map((item) => (
+                <li key={item.label}>
                   <Link
-                    href="/equipment"
+                    href={item.href}
                     className="text-sm text-muted transition-colors hover:text-accent"
                   >
-                    {item}
+                    {item.label}
                   </Link>
                 </li>
               ))}

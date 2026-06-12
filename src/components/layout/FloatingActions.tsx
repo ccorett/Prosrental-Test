@@ -26,8 +26,10 @@ export function FloatingActions() {
       </a>
       <a
         href={SITE.phoneHref}
+        target="_blank"
+        rel="noopener noreferrer"
         className="flex h-14 w-14 items-center justify-center rounded-full bg-accent text-background shadow-lg shadow-accent/30 transition-all duration-300 hover:scale-110 hover:bg-accent-hover hover:shadow-xl hover:shadow-accent/50"
-        aria-label={`Call ${SITE.phone}`}
+        aria-label={`Message ${SITE.phone} on WhatsApp`}
       >
         <Phone className="h-6 w-6" />
       </a>

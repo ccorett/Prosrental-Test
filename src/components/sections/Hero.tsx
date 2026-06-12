@@ -49,6 +49,8 @@ export function Hero() {
               </LinkButton>
               <a
                 href={SITE.phoneHref}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface-elevated px-8 py-3.5 text-base font-semibold text-foreground transition-all duration-300 hover:border-secondary hover:text-secondary hover:shadow-lg hover:shadow-secondary/15 hover-lift"
               >
                 <Phone className="h-5 w-5 text-secondary" />

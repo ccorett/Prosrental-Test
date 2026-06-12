@@ -67,6 +67,8 @@ export function Footer() {
               <li>
                 <a
                   href={SITE.phoneHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex items-start gap-2 text-sm text-muted transition-colors duration-200 hover:text-accent"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-accent" />

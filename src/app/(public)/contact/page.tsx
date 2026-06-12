@@ -35,7 +35,7 @@ export default function ContactPage() {
               <h2 className="text-2xl font-bold text-foreground">Get in Touch</h2>
               <p className="mt-4 leading-relaxed text-muted">
                 Call, email, or submit a quote request. We respond within 24 hours on
-                equipment inquiries and rental estimates.
+                equipment inquiries and rental quotes.
               </p>
 
               <MapPlaceholder location={SITE.location} className="mt-8 aspect-[4/3] w-full" />
@@ -44,6 +44,8 @@ export default function ContactPage() {
                 <li>
                   <a
                     href={SITE.phoneHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-start gap-4 rounded-xl border border-border bg-surface-elevated p-4 transition-colors hover:border-accent/40"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent-muted text-accent">

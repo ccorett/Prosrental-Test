@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { PortalFeatureCard } from "@/components/portal/PortalFeatureCard";
 import { PortalHero } from "@/components/portal/PortalHero";
 import { PortalRoadmap } from "@/components/portal/PortalRoadmap";
 import { Container } from "@/components/ui/Container";
+import { getSessionCustomer } from "@/lib/auth/session";
 import { PORTAL_FEATURES } from "@/lib/portal";
 
 export const metadata: Metadata = {
@@ -11,7 +14,12 @@ export const metadata: Metadata = {
     "Manage Pro Rentals bookings, quotations, invoices, documents, and service requests online.",
 };
 
-export default function CustomerPortalPage() {
+export default async function CustomerPortalPage() {
+  const customer = await getSessionCustomer();
+  if (customer) {
+    redirect("/customer-portal/dashboard");
+  }
+
   return (
     <>
       <PortalHero />
@@ -34,6 +42,21 @@ export default function CustomerPortalPage() {
               <PortalFeatureCard key={feature.id} feature={feature} />
             ))}
           </div>
+
+          <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/customer-portal/login"
+              className="inline-flex rounded-2xl bg-accent px-8 py-3.5 text-sm font-semibold text-canvas glow-accent transition-colors hover:bg-accent-hover"
+            >
+              Sign In
+            </Link>
+            <Link
+              href="/customer-portal/register"
+              className="inline-flex rounded-2xl border border-accent/40 px-8 py-3.5 text-sm font-semibold text-foreground transition-colors hover:bg-accent/10"
+            >
+              Create Account
+            </Link>
+          </div>
         </Container>
       </section>
 
@@ -45,8 +68,8 @@ export default function CustomerPortalPage() {
               Built for Self-Service
             </h2>
             <p className="mt-4 text-muted">
-              We are rolling out portal capabilities in phases. Authentication
-              and customer accounts will connect to this experience next.
+              Phase 1 is live—create your account to manage bookings, quotes,
+              invoices, documents, and service requests online.
             </p>
           </header>
           <PortalRoadmap />

@@ -65,8 +65,10 @@ export function SiteNavbar() {
           <div className="hidden items-center gap-5 lg:flex">
             <a
               href={SITE.phoneHref}
+              target="_blank"
+              rel="noopener noreferrer"
               className="label-caps text-muted transition-colors hover:text-foreground"
-              title={`Call ${SITE.phone}`}
+              title={`Message ${SITE.phone} on WhatsApp`}
             >
               {SITE.phone}
             </a>
@@ -123,7 +125,12 @@ export function SiteNavbar() {
                 {item.label}
               </Link>
             ))}
-            <a href={SITE.phoneHref} className="label-caps px-3 py-3 text-accent">
+            <a
+              href={SITE.phoneHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="label-caps px-3 py-3 text-accent"
+            >
               {SITE.phone}
             </a>
             <p className="px-3 pb-1 text-sm text-muted">{SITE.location}</p>

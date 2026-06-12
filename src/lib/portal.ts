@@ -10,7 +10,7 @@ import {
   Wrench,
 } from "lucide-react";
 
-export const PORTAL_PATH = "/customer-portal" as const;
+export { PORTAL_PATH, PORTAL_NAV, shouldHidePublicCta } from "@/lib/portal/nav";
 
 export type PortalFeature = {
   id: string;
@@ -128,27 +128,27 @@ export const PORTAL_ROADMAP: PortalRoadmapItem[] = [
     title: "Customer accounts & login",
     description:
       "Secure sign-in, profile management, and personalised dashboard views.",
-    status: "in-progress",
+    status: "available",
   },
   {
     phase: "Phase 3",
     title: "Online booking & quotes",
     description:
       "Reserve equipment, manage quotations, and accept quotes in the portal.",
-    status: "planned",
+    status: "available",
   },
   {
     phase: "Phase 4",
     title: "Invoices & documents",
     description:
       "Download invoices, track payments, and access agreements and manuals.",
-    status: "planned",
+    status: "available",
   },
   {
     phase: "Phase 5",
     title: "Service & notifications",
     description:
       "Service requests, return scheduling, and automated rental reminders.",
-    status: "planned",
+    status: "available",
   },
 ];

@@ -14,6 +14,85 @@ enum AvailabilityStatus {
   COMING_SOON
 }
 
+enum CustomerStatus {
+  ACTIVE
+  SUSPENDED
+  PENDING
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  STAFF
+}
+
+enum BookingRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum RentalStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+  OVERDUE
+  PARTIALLY_PAID
+}
+
+enum DocumentType {
+  RENTAL_AGREEMENT
+  SAFETY_DOCUMENT
+  EQUIPMENT_MANUAL
+}
+
+enum ServiceRequestType {
+  EQUIPMENT_ISSUE
+  SUPPORT_REQUEST
+  RETURN_REQUEST
+}
+
+enum ServiceRequestStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum ServicePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum NotificationType {
+  RENTAL_REMINDER
+  RETURN_REMINDER
+  INVOICE_REMINDER
+  ACCOUNT_NOTICE
+}
+
+enum ReadStatus {
+  READ
+  UNREAD
+}
+
 model EquipmentInventory {
   id                 String             @id @default(cuid())
   itemId             String             @unique @map("item_id")
@@ -36,4 +115,172 @@ model EquipmentInventory {
   @@index([featured])
   @@index([availabilityStatus])
   @@map("equipment_inventory")
+}
+
+model Customer {
+  id           String         @id @default(cuid())
+  fullName     String         @map("full_name")
+  email        String         @unique
+  phone        String?
+  companyName  String?        @map("company_name")
+  address      String?
+  passwordHash String         @map("password_hash")
+  status       CustomerStatus @default(ACTIVE)
+  role         UserRole       @default(CUSTOMER)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+
+  sessions        CustomerSession[]
+  bookingRequests BookingRequest[]
+  quotes          Quote[]
+  rentals         Rental[]
+  invoices        Invoice[]
+  documents       CustomerDocument[]
+  serviceRequests ServiceRequest[]
+  notifications   Notification[]
+
+  @@map("customers")
+}
+
+model CustomerSession {
+  id         String   @id @default(cuid())
+  customerId String   @map("customer_id")
+  token      String   @unique
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@map("customer_sessions")
+}
+
+model BookingRequest {
+  id               String               @id @default(cuid())
+  customerId       String               @map("customer_id")
+  equipmentId      String               @map("equipment_id")
+  equipmentName    String               @map("equipment_name")
+  rentalStartDate  DateTime             @map("rental_start_date")
+  rentalEndDate    DateTime             @map("rental_end_date")
+  deliveryRequired Boolean              @default(false) @map("delivery_required")
+  deliveryAddress  String?              @map("delivery_address")
+  requestStatus    BookingRequestStatus @default(PENDING) @map("request_status")
+  notes            String?
+  createdAt        DateTime             @default(now()) @map("created_at")
+  updatedAt        DateTime             @updatedAt @map("updated_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([requestStatus])
+  @@map("booking_requests")
+}
+
+model Quote {
+  id                String      @id @default(cuid())
+  customerId        String      @map("customer_id")
+  quoteNumber       String      @unique @map("quote_number")
+  equipmentRequested String     @map("equipment_requested")
+  rentalDuration    String      @map("rental_duration")
+  estimatedTotal    Decimal     @map("estimated_total") @db.Decimal(10, 2)
+  status            QuoteStatus @default(DRAFT)
+  validUntil        DateTime    @map("valid_until")
+  notes             String?
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([status])
+  @@map("quotes")
+}
+
+model Rental {
+  id               String       @id @default(cuid())
+  customerId       String       @map("customer_id")
+  equipmentName    String       @map("equipment_name")
+  rentalStartDate  DateTime     @map("rental_start_date")
+  rentalEndDate    DateTime     @map("rental_end_date")
+  returnDate       DateTime?    @map("return_date")
+  status           RentalStatus @default(ACTIVE)
+  performanceNotes String?      @map("performance_notes")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  customer        Customer         @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  serviceRequests ServiceRequest[]
+
+  @@index([customerId])
+  @@index([status])
+  @@map("rentals")
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  customerId    String        @map("customer_id")
+  invoiceNumber String        @unique @map("invoice_number")
+  amount        Decimal       @db.Decimal(10, 2)
+  status        InvoiceStatus @default(UNPAID)
+  dueDate       DateTime      @map("due_date")
+  pdfUrl        String?       @map("pdf_url")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([status])
+  @@map("invoices")
+}
+
+model CustomerDocument {
+  id            String       @id @default(cuid())
+  customerId    String       @map("customer_id")
+  title         String
+  documentType  DocumentType @map("document_type")
+  equipmentName String?      @map("equipment_name")
+  fileUrl       String       @map("file_url")
+  createdAt     DateTime     @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@map("customer_documents")
+}
+
+model ServiceRequest {
+  id          String               @id @default(cuid())
+  customerId  String               @map("customer_id")
+  rentalId    String?              @map("rental_id")
+  requestType ServiceRequestType   @map("request_type")
+  subject     String
+  description String
+  status      ServiceRequestStatus @default(OPEN)
+  priority    ServicePriority      @default(MEDIUM)
+  createdAt   DateTime             @default(now()) @map("created_at")
+  updatedAt   DateTime             @updatedAt @map("updated_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  rental   Rental?  @relation(fields: [rentalId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([status])
+  @@map("service_requests")
+}
+
+model Notification {
+  id               String           @id @default(cuid())
+  customerId       String           @map("customer_id")
+  title            String
+  message          String
+  notificationType NotificationType @map("notification_type")
+  readStatus       ReadStatus       @default(UNREAD) @map("read_status")
+  createdAt        DateTime         @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([readStatus])
+  @@map("notifications")
 }

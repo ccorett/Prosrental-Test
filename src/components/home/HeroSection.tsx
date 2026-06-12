@@ -25,9 +25,9 @@ export function HeroSection() {
         </h1>
 
         <p className="mt-4 max-w-xl text-base leading-relaxed text-muted sm:text-lg">
-          Pro Rentals is your local equipment rental partner—browse inventory, estimate
-          costs, and request quotes for contractors, businesses, homeowners, and
-          facility managers.
+          Pro Rentals is your local equipment rental partner—browse inventory and
+          request quotes for contractors, businesses, homeowners, and facility
+          managers.
         </p>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
@@ -39,6 +39,8 @@ export function HeroSection() {
           </LinkButton>
           <a
             href={SITE.phoneHref}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface/80 px-8 py-3.5 text-base font-semibold text-foreground backdrop-blur-sm transition-colors hover:border-secondary hover:text-secondary"
           >
             <Phone className="h-5 w-5 text-secondary" />

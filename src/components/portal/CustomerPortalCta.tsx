@@ -4,12 +4,12 @@ import { ArrowRight, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui/Container";
-import { PORTAL_PATH } from "@/lib/portal";
+import { PORTAL_PATH, shouldHidePublicCta } from "@/lib/portal/nav";
 
 export function CustomerPortalCta() {
   const pathname = usePathname();
 
-  if (pathname === PORTAL_PATH) {
+  if (shouldHidePublicCta(pathname)) {
     return null;
   }
 

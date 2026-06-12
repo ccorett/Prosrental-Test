@@ -12,7 +12,8 @@
     "db:migrate:dev": "prisma migrate dev",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:verify": "tsx scripts/verify-inventory.ts"
+    "db:verify": "tsx scripts/verify-inventory.ts",
+    "db:verify-portal": "tsx scripts/verify-portal-db.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -20,6 +21,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.4.0",
     "@prisma/client": "^6.9.0",
+    "bcryptjs": "^3.0.3",
     "lucide-react": "^0.511.0",
     "next": "^15.3.2",
     "react": "^19.1.0",
@@ -27,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.15.21",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",

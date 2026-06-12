@@ -12,8 +12,8 @@ export function CompanyOverviewSection() {
             Equipment Rentals for Every Project
           </h2>
           <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">
-            {COMPANY_OVERVIEW} Based in {SITE.location}, we help you browse inventory,
-            estimate costs, and request quotes—all in one place.
+            {COMPANY_OVERVIEW} Based in {SITE.location}, we help you browse inventory
+            and request quotes—all in one place.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <LinkButton href="/contact" size="lg">

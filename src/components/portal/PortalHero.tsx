@@ -1,7 +1,6 @@
 import { LayoutGrid } from "lucide-react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { PORTAL_PATH } from "@/lib/portal";
 
 export function PortalHero() {
   return (
@@ -26,23 +25,18 @@ export function PortalHero() {
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
-            href={PORTAL_PATH}
+            href="/customer-portal/login"
             className="inline-flex items-center justify-center rounded-2xl bg-accent px-8 py-3.5 text-sm font-semibold text-canvas glow-accent transition-colors hover:bg-accent-hover"
           >
-            Access Customer Portal
+            Sign In to Portal
           </Link>
           <Link
-            href="/contact"
+            href="/customer-portal/register"
             className="inline-flex items-center justify-center rounded-2xl border border-border bg-surface-elevated/80 px-8 py-3.5 text-sm font-semibold text-foreground backdrop-blur-sm transition-colors hover:border-accent/40"
           >
-            Request a Quote
+            Create Account
           </Link>
         </div>
-
-        <p className="mt-6 max-w-xl text-sm text-muted">
-          Account sign-in is coming soon. Explore portal features below and
-          contact us to register your interest.
-        </p>
       </Container>
     </section>
   );

@@ -29,6 +29,8 @@ export function CtaBanner() {
               </LinkButton>
               <a
                 href={SITE.phoneHref}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-surface px-8 py-3.5 text-base font-semibold text-foreground transition-all duration-300 hover:border-secondary hover:text-secondary"
               >
                 <Phone className="h-5 w-5 text-secondary" />

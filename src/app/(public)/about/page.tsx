@@ -71,7 +71,7 @@ export default function AboutPage() {
               </h2>
               <p className="mt-4 text-muted">
                 We position Pro Rentals as a dependable rental partner—not just a
-                catalogue, but a team that helps you plan, estimate, and execute.
+                catalogue, but a team that helps you plan, quote, and execute.
               </p>
             </header>
             <div className="grid gap-6 md:grid-cols-3">
